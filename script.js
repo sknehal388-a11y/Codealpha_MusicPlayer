@@ -21,7 +21,7 @@ const songs = [
 
 let currentSong = 0;
 
-const audio = new Audio();
+const audio = document.getElementById("audio");
 
 const cover = document.getElementById("cover");
 const title = document.getElementById("title");
