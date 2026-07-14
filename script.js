@@ -34,7 +34,7 @@ const nextBtn = document.getElementById("next");
 const progress = document.getElementById("progress");
 const volume = document.getElementById("volume");
 
-const currentTime = document.getElementById("current-time");
+const currentTime = document.getElementById("current");
 const duration = document.getElementById("duration");
 
 const playlist = document.getElementById("playlist");
@@ -91,6 +91,15 @@ prevBtn.addEventListener("click", () => {
 });
 
 audio.addEventListener("timeupdate", () => {
+  audio.addEventListener("loadedmetadata", () => {
+    progress.max = audio.duration;
+
+    let durationMin = Math.floor(audio.duration / 60);
+    let durationSec = Math.floor(audio.duration % 60);
+
+    duration.textContent =
+        `${durationMin}:${String(durationSec).padStart(2, "0")}`;
+});
 
     progress.max = audio.duration || 0;
     progress.value = audio.currentTime;
