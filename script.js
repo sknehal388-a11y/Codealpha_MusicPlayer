@@ -1,136 +1,159 @@
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+const songs = [
+  {
+    title: "Acoustic Vibes",
+    artist: "Artist One",
+    src: "songs/song1.mp3",
+    cover: "images/cover1.png"
+  },
+  {
+    title: "Night Drive",
+    artist: "Artist Two",
+    src: "songs/song2.mp3",
+    cover: "images/cover2.png"
+  },
+  {
+    title: "Dreams",
+    artist: "Artist Three",
+    src: "songs/song3.mp3",
+    cover: "images/cover3.png"
+  }
+];
+
+let currentSong = 0;
+
+const audio = new Audio();
+
+const cover = document.getElementById("cover");
+const title = document.getElementById("title");
+const artist = document.getElementById("artist");
+
+const playBtn = document.getElementById("play");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+
+const progress = document.getElementById("progress");
+const volume = document.getElementById("volume");
+
+const currentTime = document.getElementById("current-time");
+const duration = document.getElementById("duration");
+
+const playlist = document.getElementById("playlist");
+
+function loadSong(index) {
+    const song = songs[index];
+
+    title.textContent = song.title;
+    artist.textContent = song.artist;
+    cover.src = song.cover;
+    audio.src = song.src;
+
+    updatePlaylist();
 }
 
-body{
-background:linear-gradient(135deg,#4b6cb7,#182848);
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
+function playSong() {
+    audio.play();
+    playBtn.innerHTML = "⏸";
 }
 
-.container{
-width:100%;
-display:flex;
-justify-content:center;
-padding:20px;
+function pauseSong() {
+    audio.pause();
+    playBtn.innerHTML = "▶";
 }
 
-.player{
-width:400px;
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.3);
-text-align:center;
-}
+playBtn.addEventListener("click", () => {
+    if (audio.paused) {
+        playSong();
+    } else {
+        pauseSong();
+    }
+});
 
-.player img{
-width:250px;
-height:250px;
-object-fit:cover;
-border-radius:15px;
-margin-bottom:20px;
-}
+nextBtn.addEventListener("click", () => {
+    currentSong++;
 
-.player h2{
-margin-bottom:5px;
-}
+    if (currentSong >= songs.length) {
+        currentSong = 0;
+    }
 
-.player h4{
-color:gray;
-margin-bottom:20px;
-}
+    loadSong(currentSong);
+    playSong();
+});
 
-#progress{
-width:100%;
-margin-top:15px;
-cursor:pointer;
-}
+prevBtn.addEventListener("click", () => {
+    currentSong--;
 
-.time{
-display:flex;
-justify-content:space-between;
-margin-top:5px;
-margin-bottom:20px;
-font-size:14px;
-}
+    if (currentSong < 0) {
+        currentSong = songs.length - 1;
+    }
 
-.controls{
-display:flex;
-justify-content:center;
-gap:20px;
-margin-bottom:20px;
-}
+    loadSong(currentSong);
+    playSong();
+});
 
-.controls button{
-width:60px;
-height:60px;
-border:none;
-border-radius:50%;
-background:#4b6cb7;
-color:white;
-font-size:22px;
-cursor:pointer;
-transition:.3s;
-}
+audio.addEventListener("timeupdate", () => {
 
-.controls button:hover{
-transform:scale(1.1);
-background:#182848;
-}
+    progress.max = audio.duration || 0;
+    progress.value = audio.currentTime;
 
-.volume{
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:20px;
-}
+    let currentMin = Math.floor(audio.currentTime / 60);
+    let currentSec = Math.floor(audio.currentTime % 60);
 
-.volume input{
-flex:1;
-}
+    let durationMin = Math.floor(audio.duration / 60) || 0;
+    let durationSec = Math.floor(audio.duration % 60) || 0;
 
-.playlist{
-margin-top:15px;
-text-align:left;
-}
+    currentTime.textContent =
+        `${currentMin}:${String(currentSec).padStart(2, "0")}`;
 
-.playlist h3{
-margin-bottom:10px;
-}
+    duration.textContent =
+        `${durationMin}:${String(durationSec).padStart(2, "0")}`;
+});
 
-.playlist ul{
-list-style:none;
-max-height:150px;
-overflow-y:auto;
-}
+progress.addEventListener("input", () => {
+    audio.currentTime = progress.value;
+});
 
-.playlist li{
-padding:10px;
-border-bottom:1px solid #ddd;
-cursor:pointer;
-transition:.3s;
-}
+volume.addEventListener("input", () => {
+    audio.volume = volume.value;
+});
 
-.playlist li:hover{
-background:#4b6cb7;
-color:white;
-}
+audio.addEventListener("ended", () => {
 
-@media(max-width:500px){
+    currentSong++;
 
-.player{
-width:100%;
-}
+    if (currentSong >= songs.length) {
+        currentSong = 0;
+    }
 
-.player img{
-width:220px;
-height:220px;
-}
+    loadSong(currentSong);
+    playSong();
+
+});
+
+function updatePlaylist() {
+
+    playlist.innerHTML = "";
+
+    songs.forEach((song, index) => {
+
+        const li = document.createElement("li");
+
+        li.textContent = song.title + " - " + song.artist;
+
+        if (index === currentSong) {
+            li.style.fontWeight = "bold";
+        }
+
+        li.onclick = () => {
+            currentSong = index;
+            loadSong(currentSong);
+            playSong();
+        };
+
+        playlist.appendChild(li);
+
+    });
 
 }
+
+loadSong(currentSong);
+audio.volume = 0.5;
