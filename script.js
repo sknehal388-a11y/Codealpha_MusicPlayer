@@ -2,20 +2,20 @@ const songs = [
   {
     title: "Acoustic Vibes",
     artist: "Artist One",
-    src: "songs/song1.mp3",
-    cover: "images/cover1.png"
+    src: "song1.mp3",
+    cover: "cover1.png"
   },
   {
     title: "Night Drive",
     artist: "Artist Two",
-    src: "songs/song2.mp3",
-    cover: "images/cover2.png"
+    src: "song2.mp3",
+    cover: "cover2.png"
   },
   {
     title: "Dreams",
     artist: "Artist Three",
-    src: "songs/song3.mp3",
-    cover: "images/cover3.png"
+    src: "song3.mp3",
+    cover: "cover3.png"
   }
 ];
 
